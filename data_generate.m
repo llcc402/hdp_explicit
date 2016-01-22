@@ -1,16 +1,15 @@
 % Input:
 %      M        a scalar. The number of documents.
 %      D        a scalar. The size of the dictionary.
-%      lambda   a scalar. The expected number of words in each documents.
-%      actN     a scalar. The maximum number of activated atoms.
-%      gamma    a scalar. The concentration parameter of G0.
+%      lambda   a scalar. The expected number of words in each document.
+%      K        a scalar. The maximum number of topics in each document.
 %      alpha    a scalar. The concentration parameter of G1 to GM.
 %      beta     a scalar. The parameter of the topics.
 % Output:
 %      mixing   a matrix of order M * actN. The mixing measure of each document.
 %      data     a matrix of order M * actN. The documents.
 %      topic    a matrix of order actN * D.
-function [data, mixing, topic] = data_generate(M, D, lambda, actN, gamma, alpha, beta)
+function [data, mixing, topic] = data_generate(M, D, lambda, K, alpha, beta)
 if nargin < 1
     M = 100;
 end
@@ -21,30 +20,29 @@ if nargin < 3
     lambda = 80;
 end
 if nargin < 4
-    actN = 100;
+    K = 10;
 end
 if nargin < 5
-    gamma = 5;
-end
-if nargin < 6
     alpha = 1;
 end
-if nargin < 7
+if nargin < 6
     beta = 1;
 end
 
 %--------------------------------------------------------------------------
 % STEP 1: Generate topic
 %--------------------------------------------------------------------------
-topic = dirichletrnd(beta * ones(actN, D));
+topic = dirichletrnd(ones(K, D));
+% make the topics concentrate on some important words
+topic = dirichletrnd(beta * topic);
 
 %--------------------------------------------------------------------------
 % STEP 2: Generate mixing measure
 %--------------------------------------------------------------------------
-mixing = zeros(M, actN);
-G0 = gem(actN, gamma);
+mixing = zeros(M, K);
 for i = 1:M
-    mixing(i,:) = dpDisrnd(alpha, G0);
+    ix = find(rand(1, K) > .3);
+    mixing(i, ix) = dirichletrnd(alpha * ones(1, length(ix)));
 end
 
 %--------------------------------------------------------------------------
