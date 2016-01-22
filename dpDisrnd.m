@@ -25,7 +25,7 @@ if nargin < 1
 end
 
 param1 = alpha * G_0;
-param2 = alpha * (1 - cumsum(G_0));
+param2 = alpha * (sum(G_0) - cumsum(G_0));
 param2(param2 < 0) = 0;
 
 G_tilde = betarnd(param1, param2);
