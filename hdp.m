@@ -56,7 +56,13 @@ for iter = 1:maxIter
     % sample G1, ..., GM
     for i = 1:actN
         counts = histcounts(Z(i,:), 1:actN+1);
-        mixing_post(i,:) = dpDisrnd(1, alpha * G0_weights + counts);
+        a = alpha * G0_weights + counts;
+        b =[cumsum(a(2:end), 'reverse'), 0];
+        
+        V = betarnd(a,b);
+        mixing_post(i,:) = V;
+        V = cumprod(1-V);
+        mixing_post(i,2:end) = mixing_post(i,2:end) .* V(1:end-1); 
     end
     
     % sample Z
