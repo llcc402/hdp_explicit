@@ -32,9 +32,12 @@ end
 %--------------------------------------------------------------------------
 % STEP 1: Generate topic
 %--------------------------------------------------------------------------
-topic = dirichletrnd(ones(K, D));
-% make the topics concentrate on some important words
-topic = dirichletrnd(beta * topic);
+topic = zeros(K, D);
+for k = 1:K
+    topic(k,:) = dirichletrnd(beta * ones(1,D));
+    % make different topic concentrates on different words
+    topic(k,:) = dirichletrnd(topic(k,:));
+end
 
 %--------------------------------------------------------------------------
 % STEP 2: Generate mixing measure
