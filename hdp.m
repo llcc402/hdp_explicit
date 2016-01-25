@@ -54,7 +54,7 @@ for iter = 1:maxIter
     G0_weights(2:end) = G0_weights(2:end) .* V(1:end-1);
     
     % sample G1, ..., GM
-    for i = 1:actN
+    for i = 1:size(mixing_post, 1)
         counts = histcounts(Z(i,:), 1:actN+1);
         a = alpha * G0_weights + counts;
         b =[cumsum(a(2:end), 'reverse'), 0];
