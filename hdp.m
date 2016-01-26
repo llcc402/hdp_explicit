@@ -28,7 +28,7 @@ mixing_post = zeros(size(data, 1), actN);
 
 % Z is the latent variables, we assume all words are sampled from topic 1
 % initially
-Z = fix(rand(size(data)) * 10) .* (data > 0) + 1;
+Z = randi(5, size(data));
 
 %--------------------------------------------------------------------------
 % STEP 2: Gibbs sampling

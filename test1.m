@@ -29,11 +29,12 @@ end
 
 ix = find(sum(data) > 0);
 data = data(:,ix);
+
 %--------------------------------------------------------------------------
 % STEP 2: Init hdp pamameters
 %--------------------------------------------------------------------------
 % concentration parameter for G0
-gamma = .1;
+gamma = .5;
 % concentration parameter for G1 to G5
 alpha = .1;
 % hyper parameter for topics
@@ -46,7 +47,7 @@ Z = ones(size(data)) .* (data > 0);
 actN = 100;
 
 % maximum number of iterations for gibbs sampling
-maxIter = 1000;
+maxIter = 5000 * 2;
 
 % mixing measures
 mixing_post = zeros(5, actN);
@@ -59,7 +60,14 @@ topic_post = zeros(actN, size(data, 2));
 %--------------------------------------------------------------------------
 for iter = 1:maxIter
     % sample G0
-    a = histcounts(Z(:), 1:actN+1);
+    counts = accumarray(Z(:)+1, data(:));
+    counts = counts(2:end);
+    if length(counts) < actN
+        a = [counts', zeros(1, actN - length(counts))];
+    elseif length(counts) == actN
+        a = counts';
+    end
+        
     b = [cumsum(a(2:end), 'reverse'), 0];
 
     a = a + 1;
